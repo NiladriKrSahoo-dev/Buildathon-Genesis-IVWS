@@ -30,6 +30,14 @@ public class RoomStateManager : MonoBehaviour
     public CanvasGroup escapeCanvasGroup;
     public TextMeshProUGUI escapeTextUI;
 
+    [Header("Ending 4: The Twisted Memory (Wife & Knife Reveal)")]
+    [Tooltip("Drag the civilian_girl GameObject or leave empty to auto-find under Ending_Sequence.")]
+    public GameObject wifeModel;
+    [Tooltip("Drag the knife GameObject or leave empty to auto-find under Ending_Sequence.")]
+    public GameObject knifeModel;
+    [Tooltip("Automatically snaps knife to wife's hand (hand_right) if not already attached.")]
+    public bool autoAttachKnifeToHand = true;
+
     [Header("State")]
     public bool isMemoryShifted = false;
     public bool isEscaped = false;
@@ -48,6 +56,7 @@ public class RoomStateManager : MonoBehaviour
         EnsureEscapeCanvas();
 
         // Game always starts with Normal Room active and Ending Sequence hidden
+        EnsureWifeAndKnife();
         if (normalRoom != null) normalRoom.SetActive(true);
         if (endingSequence != null) endingSequence.SetActive(false);
     }
@@ -265,8 +274,77 @@ public class RoomStateManager : MonoBehaviour
     {
         AutoFindRoomReferences();
         if (normalRoom != null) normalRoom.SetActive(false);
-        if (endingSequence != null) endingSequence.SetActive(true);
+        if (endingSequence != null)
+        {
+            endingSequence.SetActive(true);
+            EnsureWifeAndKnife();
+            if (wifeModel != null) wifeModel.SetActive(true);
+            if (knifeModel != null) knifeModel.SetActive(true);
+        }
         isMemoryShifted = true;
+    }
+
+    public void EnsureWifeAndKnife()
+    {
+        if (endingSequence == null) AutoFindRoomReferences();
+
+        // 1. Auto-find Wife if not assigned
+        if (wifeModel == null && endingSequence != null)
+        {
+            Transform[] allChildren = endingSequence.GetComponentsInChildren<Transform>(true);
+            foreach (Transform t in allChildren)
+            {
+                string n = t.name.ToLower();
+                if (n.Contains("civilian") || n.Contains("wife") || n.Contains("girl"))
+                {
+                    wifeModel = t.gameObject;
+                    break;
+                }
+            }
+        }
+
+        // 2. Auto-find Knife if not assigned
+        if (knifeModel == null && endingSequence != null)
+        {
+            Transform[] allChildren = endingSequence.GetComponentsInChildren<Transform>(true);
+            foreach (Transform t in allChildren)
+            {
+                string n = t.name.ToLower();
+                if (n.Contains("knife"))
+                {
+                    knifeModel = t.gameObject;
+                    break;
+                }
+            }
+        }
+
+        // 3. Auto-attach knife to right hand
+        if (autoAttachKnifeToHand && wifeModel != null && knifeModel != null)
+        {
+            Transform hand = FindRightHandBone(wifeModel.transform);
+            if (hand != null && knifeModel.transform.parent != hand)
+            {
+                knifeModel.transform.SetParent(hand, false);
+                knifeModel.transform.localPosition = new Vector3(0.04f, 0.02f, 0.06f);
+                knifeModel.transform.localRotation = Quaternion.Euler(0f, 90f, -40f);
+                knifeModel.transform.localScale = Vector3.one * 0.8f;
+                Debug.Log($"RoomStateManager: Snapped knife into wife's hand '{hand.name}'!");
+            }
+        }
+    }
+
+    private Transform FindRightHandBone(Transform root)
+    {
+        Transform[] bones = root.GetComponentsInChildren<Transform>(true);
+        foreach (Transform b in bones)
+        {
+            string bn = b.name.ToLower();
+            if (bn == "hand_right" || bn == "hand_r" || bn == "righthand" || bn.Contains("hand_r"))
+            {
+                return b;
+            }
+        }
+        return null;
     }
 
     // Step 5: The Final Escape - Called by Door.cs when interacted with key
