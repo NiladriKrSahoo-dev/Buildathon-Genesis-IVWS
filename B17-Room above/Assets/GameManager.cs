@@ -30,6 +30,10 @@ public class GameManager : MonoBehaviour
         {
             gameObject.AddComponent<IntroScreenManager>();
         }
+        if (GetComponent<EerieMusicManager>() == null)
+        {
+            gameObject.AddComponent<EerieMusicManager>();
+        }
     }
 
     void Start()

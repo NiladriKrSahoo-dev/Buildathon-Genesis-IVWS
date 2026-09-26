@@ -152,6 +152,7 @@ public class TapePlayer : Interactable
 
         ActivateTVGlow();
         if (GramophoneController.instance != null) GramophoneController.instance.DuckVolume(true);
+        if (EerieMusicManager.instance != null) EerieMusicManager.instance.DuckVolume(true);
 
         if (audioSource != null && clip != null)
         {
@@ -212,6 +213,7 @@ public class TapePlayer : Interactable
                     clockTriggered = true;
                     if (clockController != null) clockController.TriggerTimeShift();
                     if (roomStateManager != null) roomStateManager.TriggerClimaxFlicker();
+                    if (EerieMusicManager.instance != null) EerieMusicManager.instance.TransitionToNightmare();
                 }
             }
 
@@ -243,6 +245,10 @@ public class TapePlayer : Interactable
             if (GramophoneController.instance != null)
             {
                 GramophoneController.instance.DuckVolume(false);
+            }
+            if (EerieMusicManager.instance != null)
+            {
+                EerieMusicManager.instance.DuckVolume(false);
             }
         }
         else if (tapeNumber == 2)

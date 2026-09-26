@@ -60,6 +60,11 @@ public class IntroScreenManager : MonoBehaviour
         // Automatically maximize / fullscreen the game when Play is clicked
         SetFullScreen(true);
 
+        if (EerieMusicManager.instance != null)
+        {
+            EerieMusicManager.instance.PlayMusic();
+        }
+
         if (playButtonObj != null)
         {
             Destroy(playButtonObj);

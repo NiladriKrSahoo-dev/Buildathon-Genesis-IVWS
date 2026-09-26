@@ -557,6 +557,11 @@ public class RoomStateManager : MonoBehaviour
         // Position the key clearly visible in the Ending Room with a warm golden glint!
         SetupEndingKey();
 
+        if (EerieMusicManager.instance != null)
+        {
+            EerieMusicManager.instance.TransitionToNightmare();
+        }
+
         isMemoryShifted = true;
         StartHeartbeat();
     }
@@ -770,6 +775,11 @@ public class RoomStateManager : MonoBehaviour
         // Fade in pure white light canvas as the door swings open
         float elapsed = 0f;
         float whiteFadeDuration = Mathf.Max(1.8f, openDuration);
+
+        if (EerieMusicManager.instance != null)
+        {
+            EerieMusicManager.instance.FadeOut(whiteFadeDuration);
+        }
         if (whiteFlashCanvasGroup != null)
         {
             whiteFlashCanvasGroup.blocksRaycasts = true;
