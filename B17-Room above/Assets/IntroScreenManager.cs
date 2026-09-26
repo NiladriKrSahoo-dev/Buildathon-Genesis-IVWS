@@ -39,6 +39,12 @@ public class IntroScreenManager : MonoBehaviour
 
     void Update()
     {
+        // F11 to toggle fullscreen anytime during gameplay or presentation
+        if (Input.GetKeyDown(KeyCode.F11))
+        {
+            ToggleFullScreen();
+        }
+
         // Keyboard shortcut to start game if mouse is not clicked
         if (!hasStarted && (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)))
         {
@@ -51,10 +57,38 @@ public class IntroScreenManager : MonoBehaviour
         if (hasStarted) return;
         hasStarted = true;
 
+        // Automatically maximize / fullscreen the game when Play is clicked
+        SetFullScreen(true);
+
         if (playButtonObj != null)
         {
             Destroy(playButtonObj);
         }
+    }
+
+    public static void ToggleFullScreen()
+    {
+        SetFullScreen(!Screen.fullScreen);
+    }
+
+    public static void SetFullScreen(bool full)
+    {
+        Screen.fullScreen = full;
+#if UNITY_EDITOR
+        try
+        {
+            var gameViewType = System.Type.GetType("UnityEditor.GameView,UnityEditor");
+            if (gameViewType != null)
+            {
+                var gameView = UnityEditor.EditorWindow.GetWindow(gameViewType);
+                if (gameView != null)
+                {
+                    gameView.maximized = full;
+                }
+            }
+        }
+        catch { }
+#endif
     }
 
     private void CreateIntroUI()
