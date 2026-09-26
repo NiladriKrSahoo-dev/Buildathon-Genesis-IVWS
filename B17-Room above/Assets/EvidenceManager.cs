@@ -29,14 +29,14 @@ public class EvidenceManager : MonoBehaviour
     {
         if (GameObject.Find("WhiskeyBottleClue") != null) return;
 
-        // Find tv_desk or sofa_big - completely away from the gramophone on tea_table 1!
-        GameObject targetFurniture = GameObject.Find("tv_desk");
-        if (targetFurniture == null) targetFurniture = GameObject.Find("sofa_big");
+        // Place on or near sofa_big / small table so it never conflicts with the TV player!
+        GameObject targetFurniture = GameObject.Find("sofa_big");
+        if (targetFurniture == null) targetFurniture = GameObject.Find("tea_table (1)");
         if (targetFurniture == null)
         {
             foreach (var go in Resources.FindObjectsOfTypeAll<GameObject>())
             {
-                if (go.scene.isLoaded && (go.name.Contains("tv_desk") || go.name.Contains("sofa_big")))
+                if (go.scene.isLoaded && (go.name.Contains("sofa_big") || go.name.Contains("tea_table")))
                 {
                     targetFurniture = go;
                     break;
@@ -335,45 +335,68 @@ public class EvidenceManager : MonoBehaviour
         ev.discoverySubtitle = "Her diary from that night: 'He took my car keys. He changed the front door lock. He says he's protecting me... God help me.'";
     }
 
+    [Header("Presentation & Ending Configuration")]
+    [Tooltip("0 = Auto, 1 = Force Ending 1 (The Truth), 2 = Force Ending 2 (Full Confession)")]
+    public int forcedEnding = 0;
+
+    void Update()
+    {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        // Presentation hotkeys to effortlessly guarantee desired ending during live demo
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            forcedEnding = 1;
+            Debug.Log("DEMO HOTKEY: Set to ENDING 1 (The Truth)");
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            forcedEnding = 2;
+            Debug.Log("DEMO HOTKEY: Set to ENDING 2 (Full Confession)");
+        }
+#endif
+    }
+
     // ==================== DYNAMIC ENDINGS BASED ON GUILT SCORE ====================
     public static string GetEndingTitle()
     {
-        if (guiltScore == 0) return "ENDING 1: DENIAL";
-        if (guiltScore == 1) return "ENDING 2: FRAGMENTS";
-        if (guiltScore == 2) return "ENDING 3: AWAKENING";
-        return "ENDING 4: FULL CONFESSION";
+        if (instance != null && instance.forcedEnding == 1) return "ENDING 1: THE TRUTH";
+        if (instance != null && instance.forcedEnding == 2) return "ENDING 2: FULL CONFESSION";
+
+        // Standard playthrough (0, 1, or 2 clues) -> Ending 1 (The Canonical Revelation)
+        // All 3 secret clues found -> Ending 2 (Full Confession)
+        if (guiltScore < 3) return "ENDING 1: THE TRUTH";
+        return "ENDING 2: FULL CONFESSION";
     }
 
     public static string GetEndingText()
     {
-        if (guiltScore == 0)
+        int endingToUse = 1;
+        if (instance != null && instance.forcedEnding > 0)
         {
-            return "<size=125%><b>ENDING 1: DENIAL</b></size>\n\n" +
-                   "<size=68%>You escaped through the white light.\n" +
-                   "You chose not to look at the evidence. You chose to remember nothing.\n\n" +
-                   "<i>You can unlock the door... but you will never escape yourself.</i></size>";
-        }
-        else if (guiltScore == 1)
-        {
-            return "<size=125%><b>ENDING 2: FRAGMENTS</b></size>\n\n" +
-                   "<size=68%>You saw a piece of the truth.\n" +
-                   "The broken promises. The apologies. But you ran before you could face it all.\n\n" +
-                   "<i>The memories you suppress do not disappear. They wait in the dark.</i></size>";
-        }
-        else if (guiltScore == 2)
-        {
-            return "<size=125%><b>ENDING 3: AWAKENING</b></size>\n\n" +
-                   "<size=68%>The truth has formed.\n" +
-                   "The empty bottle. The scratched photo. You are beginning to remember what happened.\n\n" +
-                   "<i>You were never trapped here by someone else. You locked the door from the inside.</i></size>";
+            endingToUse = instance.forcedEnding;
         }
         else
         {
-            return "<size=125%><b>ENDING 4: FULL CONFESSION</b></size>\n\n" +
-                   "<size=68%>You remember everything now.\n" +
-                   "The shouting. The shattered glass. Her diary. The knife.\n\n" +
-                   "<b>You did this.</b>\n\n" +
+            // Standard playthrough (picking up key and opening door) -> Ending 1
+            // Secret completionist (finding all 3 secret evidence items) -> Ending 2
+            endingToUse = (guiltScore >= 3) ? 2 : 1;
+        }
+
+        if (endingToUse == 1)
+        {
+            return "<size=130%><b>ENDING 1: THE TRUTH</b></size>\n\n" +
+                   "<size=74%><b>You remember now.</b>\n\n" +
+                   "You were never trapped here by someone else.\n\n" +
+                   "<b>You locked the door from the inside.</b>\n\n" +
                    "<i>The room was never your prison. It was your guilt.</i></size>";
+        }
+        else
+        {
+            return "<size=130%><b>ENDING 2: FULL CONFESSION</b></size>\n\n" +
+                   "<size=74%><b>You uncovered every memory.</b>\n\n" +
+                   "The empty bottle. The scratched photo. Her desperate diary. The knife.\n\n" +
+                   "<b>You did this.</b>\n\n" +
+                   "<i>You can unlock the door... but you will never escape yourself.</i></size>";
         }
     }
 
