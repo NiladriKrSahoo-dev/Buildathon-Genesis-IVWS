@@ -16,8 +16,24 @@ public class TickingClock : MonoBehaviour
     private bool isSpinning = false;
     private int targetHour = 11;
 
+    void Awake()
+    {
+        // If modern ClockController is active on this clock, disable this script to avoid fighting hand rotations
+        if (GetComponent<ClockController>() != null)
+        {
+            enabled = false;
+            return;
+        }
+    }
+
     void Start()
     {
+        if (GetComponent<ClockController>() != null)
+        {
+            enabled = false;
+            return;
+        }
+
         // Automatically grabs the AudioSource if you forget to link it
         if (audioSource == null) audioSource = GetComponent<AudioSource>();
     }

@@ -22,20 +22,62 @@ public class ClockController : MonoBehaviour
     public float crazySpinSpeed = 1800f; 
     public float spinDuration = 8f;
 
+    [Header("Audio Settings (Optional)")]
+    public AudioSource audioSource;
+    public AudioClip windingSound;
+
     private bool isTimeShifting = false;
+
+    void Awake()
+    {
+        // CRITICAL FIX: Eliminate conflicting TickingClock component that violently resets rotations every second
+        TickingClock legacyTick = GetComponent<TickingClock>();
+        if (legacyTick != null)
+        {
+            legacyTick.enabled = false;
+            Destroy(legacyTick);
+            Debug.Log("ClockController: Disabled conflicting TickingClock script on clock.");
+        }
+
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
+    }
 
     void Start()
     {
         // Auto-find hand transforms among children if not assigned in Inspector
         if (minuteHand == null)
         {
-            Transform found = transform.Find("Minute-Hand");
-            if (found != null) minuteHand = found;
+            minuteHand = transform.Find("Minute-Hand");
+            if (minuteHand == null)
+            {
+                foreach (Transform t in GetComponentsInChildren<Transform>(true))
+                {
+                    if (t.name.IndexOf("minute", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        minuteHand = t;
+                        break;
+                    }
+                }
+            }
         }
+
         if (hourHand == null)
         {
-            Transform found = transform.Find("Hour-Hand");
-            if (found != null) hourHand = found;
+            hourHand = transform.Find("Hour-Hand");
+            if (hourHand == null)
+            {
+                foreach (Transform t in GetComponentsInChildren<Transform>(true))
+                {
+                    if (t.name.IndexOf("hour", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        hourHand = t;
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -65,6 +107,13 @@ public class ClockController : MonoBehaviour
         {
             isTimeShifting = true;
             Debug.Log("ClockController: Time Shift activated! Clock hands spinning out of control.");
+
+            if (audioSource != null)
+            {
+                if (windingSound != null) audioSource.clip = windingSound;
+                if (audioSource.clip != null) audioSource.Play();
+            }
+
             StartCoroutine(SpinOutControl());
         }
     }
@@ -82,6 +131,11 @@ public class ClockController : MonoBehaviour
             
             elapsed += Time.deltaTime;
             yield return null;
+        }
+
+        if (audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Stop();
         }
     }
 }
