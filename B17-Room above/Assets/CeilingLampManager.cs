@@ -112,36 +112,20 @@ public class CeilingLampManager : MonoBehaviour
 
     public void SetupLamp(GameObject lampObject)
     {
-        if (lampObject == null) return;
+        // If the chandelier was dropped at eye level in front of the camera, raise it to the ceiling
+        if (!lampObject.name.Contains("ceiling") && lampObject.transform.position.y < 9.0f)
+        {
+            Vector3 pos = lampObject.transform.position;
+            pos.y = 10.8f; // Hang gracefully from the room ceiling
+            lampObject.transform.position = pos;
+        }
 
         Light lampLight = lampObject.GetComponentInChildren<Light>();
         if (lampLight == null)
         {
-            // Calculate the center of all child renderers for accurate light placement
             GameObject lightChild = new GameObject("CeilingLampLightSource");
             lightChild.transform.SetParent(lampObject.transform, false);
-            
-            Renderer[] childRends = lampObject.GetComponentsInChildren<Renderer>();
-            if (childRends.Length > 0 && !lampObject.name.Contains("ceiling"))
-            {
-                // Average all child bounds to find true center of the chandelier
-                Bounds combined = childRends[0].bounds;
-                for (int i = 1; i < childRends.Length; i++)
-                {
-                    combined.Encapsulate(childRends[i].bounds);
-                }
-                // Place the light at the center of the combined bounds
-                lightChild.transform.position = combined.center;
-            }
-            else if (lampObject.name.Contains("ceiling"))
-            {
-                lightChild.transform.localPosition = new Vector3(0f, -1.2f, 0f);
-            }
-            else
-            {
-                lightChild.transform.localPosition = new Vector3(0f, -0.25f, 0f);
-            }
-
+            lightChild.transform.localPosition = new Vector3(0f, -0.6f, 0f); // Light source just below chandelier fixture
             lampLight = lightChild.AddComponent<Light>();
         }
 
@@ -157,18 +141,21 @@ public class CeilingLampManager : MonoBehaviour
         activeLampLight = lampLight;
         baseIntensity = lampIntensity;
 
-        // Apply emissive warm glow to ALL child renderers so every bulb/arm glows
+        // Clear any blinding white emission from the chandelier mesh so its natural metal textures show
         Renderer[] rends = lampObject.GetComponentsInChildren<Renderer>();
         foreach (var r in rends)
         {
             foreach (var mat in r.materials)
             {
-                mat.EnableKeyword("_EMISSION");
-                mat.SetColor("_EmissionColor", lampColor * 2.0f);
+                if (mat.HasProperty("_EmissionColor"))
+                {
+                    mat.SetColor("_EmissionColor", Color.black);
+                    mat.DisableKeyword("_EMISSION");
+                }
             }
         }
 
-        Debug.Log($"CeilingLampManager: Configured working light on '{lampObject.name}' with {rends.Length} glowing parts (Intensity: {lampIntensity}, Range: {lampRange})");
+        Debug.Log($"CeilingLampManager: Configured working light on '{lampObject.name}' at position {lampObject.transform.position} (Intensity: {lampIntensity}, Range: {lampRange})");
     }
 
     public void SetLightState(bool isOn)
