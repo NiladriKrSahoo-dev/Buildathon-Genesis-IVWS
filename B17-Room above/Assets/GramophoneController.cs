@@ -131,12 +131,8 @@ public class GramophoneController : MonoBehaviour
                          (Mathf.Sin(2f * Mathf.PI * (noteFreq * 2f) * noteT) * 0.25f) +
                          (Mathf.Sin(2f * Mathf.PI * (noteFreq * 3f) * noteT) * 0.15f);
 
-            // Vinyl surface hiss and occasional needle pop
-            float vinylHiss = (Random.value * 2f - 1f) * 0.035f;
-            float pop = (Random.value > 0.9985f) ? (Random.value * 2f - 1f) * 0.25f : 0f;
-
-            // Low-pass warm vintage filter simulation
-            samples[i] = (tone * env * 0.40f) + vinylHiss + pop;
+            // Clean vintage bell / music box tone (no static hiss or clicks)
+            samples[i] = (tone * env * 0.50f);
         }
 
         AudioClip clip = AudioClip.Create("VintageGramophoneMelody", totalSamples, 1, sampleRate, false);

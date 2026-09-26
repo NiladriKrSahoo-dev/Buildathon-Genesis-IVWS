@@ -149,62 +149,102 @@ public class EerieMusicManager : MonoBehaviour
         audioSource.Stop();
     }
 
-    // Procedural Dark Ambient Horror Drone Composition
-    // Carefully EQ'd with rich low-mid harmonics so it translates loudly and powerfully on laptop speakers and headphones
+    // Procedural Melodic Horror Composition:
+    // Pure musical notes (haunting music box & dark piano) over shifting cello chord pads, with ZERO static hiss or noise.
     private AudioClip CreateEerieAmbientMusicClip()
     {
         int sampleRate = 44100;
-        float length = 24.0f; // 24-second seamless loop
+        float length = 24.0f; // 24-second seamless musical loop
         int totalSamples = (int)(sampleRate * length);
         float[] samples = new float[totalSamples];
 
-        // Fundamental horror frequencies:
-        // D minor / G# diminished tension with rich mid-range harmonics for speaker clarity
-        float bassSub = 58.27f;       // Bb1 sub-bass
-        float bassFundamental = 77.78f; // Eb2 - warm mid-bass audible on laptop speakers
-        float fifthFreq = 116.54f;    // Bb2 - cello-like body
-        float tritoneFreq = 164.81f;  // E3 - ominous devil's tritone dissonance
-        float upperPad = 233.08f;     // Bb3 - cold cinematic string pad
-        float highHarmonic = 659.25f; // E5 - distant ghostly glass overtone
+        // 16-note haunting psychological horror melody (C minor / G harmonic minor)
+        // Evokes deep mystery, sadness, and dread
+        float[] melodyNotes = new float[] {
+            261.63f, // C4
+            311.13f, // Eb4
+            392.00f, // G4
+            523.25f, // C5 (high chilling bell)
+            493.88f, // B4 (eerie harmonic minor leading tone)
+            415.30f, // Ab4 (sorrowful drop)
+            392.00f, // G4 (restless hold)
+            311.13f, // Eb4
+            349.23f, // F4
+            415.30f, // Ab4
+            392.00f, // G4
+            311.13f, // Eb4
+            293.66f, // D4
+            349.23f, // F4
+            246.94f, // B3 (dark suspense)
+            261.63f  // C4 (resolves into loop start)
+        };
+
+        float noteDuration = length / melodyNotes.Length; // 1.5 seconds per musical note
+
+        // Chord progression bass roots (C minor -> Ab major -> F minor -> G suspended)
+        float[] chordRoots = new float[] { 65.41f, 51.91f, 43.65f, 49.00f }; // C2, Ab1, F1, G1
+        float[] chordFifths = new float[] { 98.00f, 77.78f, 65.41f, 73.42f }; // G2, Eb2, C2, D2
+        float[] chordTertiaries = new float[] { 155.56f, 130.81f, 103.83f, 123.47f }; // Eb3, C3, Ab2, B2
+        float barDuration = length / chordRoots.Length; // 6.0 seconds per chord
 
         for (int i = 0; i < totalSamples; i++)
         {
             float t = (float)i / sampleRate;
 
-            // 1. Slow, hypnotic respiratory swelling (0.07 Hz = 14s swell cycle)
-            float breath = 0.65f + 0.35f * Mathf.Sin(2f * Mathf.PI * 0.071f * t);
-            float secondaryBreath = 0.75f + 0.25f * Mathf.Cos(2f * Mathf.PI * 0.042f * t);
+            // --- 1. MELODIC MUSIC NOTES (Music Box / Dark Piano) ---
+            int noteIndex = (int)(t / noteDuration) % melodyNotes.Length;
+            float noteT = t % noteDuration;
+            float noteFreq = melodyNotes[noteIndex];
 
-            // 2. Heavy bass drone (sub + speaker-audible fundamental with binaural detune)
-            float subDrone = Mathf.Sin(2f * Mathf.PI * bassSub * t) * 0.40f;
-            float midBassDrone = (Mathf.Sin(2f * Mathf.PI * bassFundamental * t) + 
-                                  Mathf.Sin(2f * Mathf.PI * (bassFundamental + 0.45f) * t)) * 0.50f;
+            // Natural acoustic bell/piano envelope: fast smooth attack (20ms), gentle exponential decay
+            float noteAttack = Mathf.Clamp01(noteT / 0.025f);
+            float noteDecay = Mathf.Exp(-2.1f * noteT);
+            float noteEnv = noteAttack * noteDecay;
 
-            // 3. Haunting harmonic chord pads (swelling dissonant tension)
-            float fifthDrone = Mathf.Sin(2f * Mathf.PI * fifthFreq * t) * 0.40f;
-            float tritoneSwell = Mathf.Sin(2f * Mathf.PI * tritoneFreq * t) * (0.35f * breath);
-            float stringPad = Mathf.Sin(2f * Mathf.PI * upperPad * t) * (0.25f * secondaryBreath);
+            // Rich musical harmonics (fundamental + 2nd + 3rd + high glass glint)
+            float primaryNote = (Mathf.Sin(2f * Mathf.PI * noteFreq * noteT) * 0.70f) +
+                                (Mathf.Sin(2f * Mathf.PI * (noteFreq * 2f) * noteT) * 0.25f) +
+                                (Mathf.Sin(2f * Mathf.PI * (noteFreq * 3f) * noteT) * 0.12f) +
+                                (Mathf.Sin(2f * Mathf.PI * (noteFreq * 4.01f) * noteT) * 0.06f);
 
-            // 4. Ghostly glass overtone (drifts in and out like cold breathing)
-            float glassPulse = Mathf.Max(0f, Mathf.Sin(2f * Mathf.PI * 0.125f * t));
-            float glassShimmer = Mathf.Sin(2f * Mathf.PI * highHarmonic * t) * (0.12f * glassPulse);
+            float melodicSignal = primaryNote * noteEnv;
 
-            // 5. Ominous air texture
-            float noise = (Random.value * 2f - 1f) * 0.035f;
+            // Acoustic Room Echo (simulated 320ms delay on melody notes for lush room reverb)
+            if (noteT > 0.32f)
+            {
+                float echoT = noteT - 0.32f;
+                float echoEnv = Mathf.Exp(-2.5f * echoT) * 0.28f;
+                melodicSignal += (Mathf.Sin(2f * Mathf.PI * noteFreq * echoT) * 0.6f +
+                                  Mathf.Sin(2f * Mathf.PI * (noteFreq * 2f) * echoT) * 0.2f) * echoEnv;
+            }
 
-            // Sum layers with rich musical balance
-            float raw = (subDrone * 0.35f) + 
-                        (midBassDrone * 0.45f) + 
-                        (fifthDrone * 0.35f) + 
-                        (tritoneSwell * 0.35f) + 
-                        (stringPad * 0.25f) + 
-                        glassShimmer + noise;
+            // --- 2. WARM CELLO & ORGAN CHORD PADS (Pure tones, zero static) ---
+            int barIndex = (int)(t / barDuration) % chordRoots.Length;
+            int nextBarIndex = (barIndex + 1) % chordRoots.Length;
+            float barT = (t % barDuration) / barDuration;
+            float crossBlend = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((barT - 0.75f) / 0.25f)); // Smooth 1.5s crossfade between chords
 
-            // Apply soft analog-style saturation
-            samples[i] = Mathf.Clamp(raw, -1.0f, 1.0f);
+            float rootF = Mathf.Lerp(chordRoots[barIndex], chordRoots[nextBarIndex], crossBlend);
+            float fifthF = Mathf.Lerp(chordFifths[barIndex], chordFifths[nextBarIndex], crossBlend);
+            float tertF = Mathf.Lerp(chordTertiaries[barIndex], chordTertiaries[nextBarIndex], crossBlend);
+
+            // Slow respiratory breathing swell
+            float padSwell = 0.70f + 0.30f * Mathf.Sin(2f * Mathf.PI * (1f / barDuration) * t);
+
+            float padRoot = (Mathf.Sin(2f * Mathf.PI * rootF * t) + Mathf.Sin(2f * Mathf.PI * (rootF + 0.35f) * t)) * 0.5f;
+            float padFifth = Mathf.Sin(2f * Mathf.PI * fifthF * t);
+            float padTert = Mathf.Sin(2f * Mathf.PI * tertF * t);
+
+            float padSignal = ((padRoot * 0.45f) + (padFifth * 0.35f) + (padTert * 0.25f)) * padSwell;
+
+            // --- 3. COMBINE LAYERS (100% PURE MUSICAL SOUND, NO NOISE) ---
+            float rawSample = (melodicSignal * 0.65f) + (padSignal * 0.35f);
+
+            // Soft musical saturation
+            samples[i] = Mathf.Clamp(rawSample, -1.0f, 1.0f);
         }
 
-        // Seamless loop crossfade (1.2s at both boundaries)
+        // Apply 1.2 second crossfade at loop boundaries for 100% seamless, clickless looping
         int crossfadeSamples = (int)(sampleRate * 1.2f);
         for (int i = 0; i < crossfadeSamples; i++)
         {
@@ -215,20 +255,20 @@ public class EerieMusicManager : MonoBehaviour
             samples[tailIndex] = blended;
         }
 
-        // Audio Normalization: Boost waveform to 92% full scale
+        // Normalize audio to 94% peak headroom for crystal-clear, loud, pristine playback
         float maxAmp = 0.001f;
         for (int i = 0; i < totalSamples; i++)
         {
             float abs = Mathf.Abs(samples[i]);
             if (abs > maxAmp) maxAmp = abs;
         }
-        float boost = 0.92f / maxAmp;
+        float boost = 0.94f / maxAmp;
         for (int i = 0; i < totalSamples; i++)
         {
             samples[i] = Mathf.Clamp(samples[i] * boost, -0.98f, 0.98f);
         }
 
-        AudioClip clip = AudioClip.Create("EerieAmbientMusic", totalSamples, 1, sampleRate, false);
+        AudioClip clip = AudioClip.Create("EerieMelodicHorrorTheme", totalSamples, 1, sampleRate, false);
         clip.SetData(samples, 0);
         return clip;
     }
