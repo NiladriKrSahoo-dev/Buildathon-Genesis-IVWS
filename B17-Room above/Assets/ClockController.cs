@@ -81,11 +81,11 @@ public class ClockController : MonoBehaviour
         }
     }
 
-    // In Unity's coordinate system, rotating clockwise around +Z requires a negative angle (or Vector3.back)
+    // In GDTWallClock model local coordinate space, positive rotation around local forward moves hands clockwise (12 -> 3 -> 6 -> 9)
     private Vector3 GetEffectiveAxis()
     {
         Vector3 baseAxis = (rotationAxis != Vector3.zero) ? rotationAxis.normalized : Vector3.forward;
-        return spinClockwise ? -baseAxis : baseAxis;
+        return spinClockwise ? baseAxis : -baseAxis;
     }
 
     void Update()
