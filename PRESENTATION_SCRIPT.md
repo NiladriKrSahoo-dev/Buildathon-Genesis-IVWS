@@ -62,30 +62,30 @@
 
 ---
 
-### ⏱️ [2:15 – 3:30] ACT II: THE ILLUSION OF AN ESCAPE (The Desk Search)
+### ⏱️ [2:15 – 3:30] ACT II: THE ILLUSION OF AN ESCAPE (The Bookshelf Search)
 
 > **[ACTION]**  
 > Tape 1 ends. The HUD objective automatically updates:  
-> **"Search the desk drawers for Tape 2."**  
-> Walk over to the vintage wooden study desk on the right side of the room.
+> **"Search the bookshelf for Tape 2."**  
+> Walk over to the vintage wooden bookshelf near the books.
 
 **[SAY]**  
-> *"Tape 1 finishes, and the game asks us to search the desk.  
+> *"Tape 1 finishes, and the game prompts us: 'Search the bookshelf for Tape 2.'  
 > 
-> *As a player, your natural instinct is: 'I need to find the keys. I need to get out of this room.'  
+> *As a player, your natural instinct is to investigate every corner of this room looking for answers and an escape.  
 > 
-> *So we approach the study desk."*
+> *So we approach the bookshelf."*
 
 > **[ACTION]**  
-> Look at the desk drawer. Press `[E]` to slide it open.  
-> Inside lies **Tape 2: 'VHSTape_WifeLore'**.  
+> Look at the bookshelf near the vintage books.  
+> Resting right there lies **Tape 2: 'VHSTape_WifeLore'**.  
 > Look directly at it and press `[E]` to pick it up into Slot 1.  
 > Turn around and walk back toward the TV.
 
 **[SAY]**  
-> *"We pull open the drawer, and inside we find the second cassette.  
+> *"Hidden among the books, we find the second cassette.  
 > 
-> *The player assumes this is just standard detective quest progression. But what the player doesn't know is that Tape 2 is NOT a way out...  
+> *The player assumes this is just standard detective quest progression. But what the player doesn't know is that Tape 2 is NOT an escape guide...  
 > 
 > *It is the suppressed voice of the victim breaking through the delusion."*
 
@@ -187,6 +187,6 @@
 ## 💡 EMERGENCY QUICK-CARD (Keep this on your phone/screen)
 * **Start:** Hit Play ▶️ → Wait for black screen to fade out → Introduce theme.
 * **Tape 1:** Pick up Tape 1 on table `[E]` → Insert in TV `[E]` → Explain "Denial".
-* **Desk:** Go to desk `[E]` → Open drawer `[E]` → Grab Tape 2 `[E]`.
+* **Bookshelf:** Go to bookshelf → Grab Tape 2 near the books `[E]`.
 * **Tape 2 (Climax):** Insert in TV `[E]` → **Step back and SHUT UP for 10 seconds** while the clock spins and room collapses!
 * **Ending:** Walk to body → Grab Key `[E]` → Open front door `[E]` → Drop the punchline: *"You locked the door from the inside."*

@@ -108,7 +108,7 @@ public class TapePlayer : Interactable
         if (!PlayerController.hasTape)
         {
             if (warningCoroutine != null) StopCoroutine(warningCoroutine);
-            string warn = (currentTape == 1) ? "Find Tape 1 and insert it into the player." : "The deck is empty. Search the desk drawers for Tape 2.";
+            string warn = (currentTape == 1) ? "Find Tape 1 and insert it into the player." : "The deck is empty. Search the bookshelf for Tape 2.";
             warningCoroutine = StartCoroutine(ShowWarningRoutine(warn));
             return;
         }
@@ -229,11 +229,11 @@ public class TapePlayer : Interactable
             currentTape = 2;
             PlayerController.hasTape1 = false;
             PlayerController.hasTapeStatic = false;
-            Debug.Log("TapePlayer: Tape 1 done. Objective: Search the desk drawers for Tape 2.");
+            Debug.Log("TapePlayer: Tape 1 done. Objective: Search the bookshelf for Tape 2.");
 
             if (GameManager.instance != null)
             {
-                GameManager.instance.SetObjective("Search the desk drawers for Tape 2.");
+                GameManager.instance.SetObjective("Search the bookshelf for Tape 2.");
             }
 
             if (roomStateManager != null)

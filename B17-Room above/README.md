@@ -63,7 +63,7 @@ As you investigate deeper — unlocking drawers with hidden keys, playing record
 graph TD
     A["<b>Scene 1: The Awakening</b><br/>• Pitch-black silence fades out<br/>• Player wakes in warm, nostalgic vintage room<br/>• WASD movement prompt appears in top-left corner"] --> B["<b>Scene 2: The Denial (Tape 1)</b><br/>• Objective: Find and listen to cassette tape<br/>• Pick up Tape 1 from coffee table<br/>• Play on tape deck: Calm rationalization monologue"]
     
-    B --> C["<b>Scene 3: The Search for Escape</b><br/>• Objective: Search desk drawers for Tape 2<br/>• Open vintage study desk drawer<br/>• Retrieve Tape 2: 'VHSTape_WifeLore'"]
+    B --> C["<b>Scene 3: The Search for Escape</b><br/>• Objective: Search the bookshelf for Tape 2<br/>• Investigate bookshelf near the vintage books<br/>• Retrieve Tape 2: 'VHSTape_WifeLore'"]
     
     C --> D["<b>Scene 4: The Confrontation (Tape 2)</b><br/>• Insert Tape 2 into player<br/>• Television flashes with violent static<br/>• Accusatory voice: <i>'Your time is officially up...'</i>"]
     
