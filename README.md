@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="sins_logo.png" alt="SINS Logo" width="400"/>
+<img width="300" height="300" alt="Red Black Grunge Fashion Logo (1)" src="https://github.com/user-attachments/assets/25f0df07-10e4-4b50-b89c-1716219990d9" />
 </p>
 
 <h1 align="center">S I N S</h1>
