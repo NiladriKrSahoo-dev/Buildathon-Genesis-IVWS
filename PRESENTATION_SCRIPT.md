@@ -62,19 +62,20 @@
 
 ---
 
-### ⏱️ [2:15 – 3:30] ACT II: THE ILLUSION OF AN ESCAPE (The Bookshelf Search)
+### ⏱️ [2:15 – 3:30] ACT II: THE SEARCH FOR THE TRUTH
 
 > **[ACTION]**  
 > Tape 1 ends. The HUD objective automatically updates:  
-> **"Search the bookshelf for Tape 2."**  
-> Walk over to the vintage wooden bookshelf near the books.
+> **"Search the room for Tape 2."**  
+> Notice how the game gives no markers or hints — the player must investigate the room themselves.  
+> Walk over to where Tape 2 is hidden.
 
 **[SAY]**  
-> *"Tape 1 finishes, and the game prompts us: 'Search the bookshelf for Tape 2.'  
+> *"Tape 1 finishes, and the objective updates to: 'Search the room for Tape 2.'  
 > 
-> *As a player, your natural instinct is to investigate every corner of this room looking for answers and an escape.  
+> *Notice that we don't spoon-feed the player with glowing waypoints or tell them where it is. The game forces you to genuinely investigate this claustrophobic space.  
 > 
-> *So we approach the bookshelf."*
+> *We search the room, and tucked away... we discover Tape 2."*
 
 > **[ACTION]**  
 > Look at the bookshelf near the vintage books.  

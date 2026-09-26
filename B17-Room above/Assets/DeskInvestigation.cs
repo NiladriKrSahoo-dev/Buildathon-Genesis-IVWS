@@ -26,7 +26,7 @@ public class DeskInvestigation : Interactable
         captionUI.fontSize = 19f;
         captionUI.fontStyle = FontStyles.Normal;
         captionUI.color = Color.white;
-        captionUI.text = "The drawers are empty... Tape 2 must be hidden on the bookshelf near the books.";
+        captionUI.text = "The drawers are empty... Tape 2 must be hidden somewhere in this room.";
 
         yield return new WaitForSeconds(4.0f);
         captionUI.text = "";
