@@ -76,7 +76,7 @@ Assets/
 ├── CeilingLampManager.cs       # Dynamic chandelier lighting + room ambience
 ├── RoomStateManager.cs         # Master room setup orchestrator
 ├── ModernHUDManager.cs         # In-game HUD (objectives, captions, interact prompts)
-├── IntroScreenManager.cs       # Cinematic title screen with fade-in logo
+├── IntroScreenManager.cs       # Atmospheric black screen fade-in sequence
 ├── InteractPromptUI.cs         # "Press E" proximity prompt system
 └── Scenes1/
     └── MAIN.unity              # Primary game scene
@@ -86,8 +86,8 @@ Assets/
 
 ## 🎨 Key Features
 
-### Cinematic Intro
-The game opens with a dramatic title card — the **SINS** blood-splatter logo fades in from darkness, followed by the tagline *"What happened in this room?"*, before fading out into the game world.
+### Atmospheric Intro
+The game opens from total blackness, holding in suspense before smoothly fading out to reveal the dimly lit room and giving full control to the player.
 
 ### Evidence System
 Each piece of evidence has:
