@@ -15,6 +15,15 @@
 **/[Uu]ser[Ss]ettings/
 *.log
 B17-Room above
+!B17-Room above/Assets/
+!B17-Room above/Assets/**
+!B17-Room above/ProjectSettings/
+!B17-Room above/ProjectSettings/**
+!B17-Room above/Packages/
+!B17-Room above/Packages/**
+!B17-Room above/README.md
+!B17-Room above/sins_logo.png
+!B17-Room above/.gitignore
 **/.git_backup/
 
 # By default unity supports Blender asset imports, *.blend1 blender files do not need to be commited to version control.
