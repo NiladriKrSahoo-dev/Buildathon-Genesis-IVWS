@@ -9,9 +9,9 @@ public class EerieMusicManager : MonoBehaviour
     [Tooltip("Optional custom music clip. If left empty, an atmospheric horror drone will be procedurally synthesized.")]
     public AudioClip customMusicClip;
 
-    [Range(0f, 1f)] public float normalVolume = 0.32f;
-    [Range(0f, 1f)] public float duckedVolume = 0.08f;
-    [Range(0f, 1f)] public float nightmareVolume = 0.42f;
+    [Range(0f, 1f)] public float normalVolume = 0.75f;
+    [Range(0f, 1f)] public float duckedVolume = 0.25f;
+    [Range(0f, 1f)] public float nightmareVolume = 0.88f;
     public bool playOnStart = true;
 
     private AudioSource audioSource;
@@ -27,6 +27,11 @@ public class EerieMusicManager : MonoBehaviour
             return;
         }
         instance = this;
+
+        // Auto-upgrade volumes if upgrading from previous lower defaults
+        if (normalVolume < 0.70f) normalVolume = 0.75f;
+        if (duckedVolume < 0.20f) duckedVolume = 0.25f;
+        if (nightmareVolume < 0.80f) nightmareVolume = 0.88f;
 
         SetupAudioSource();
     }
@@ -63,6 +68,7 @@ public class EerieMusicManager : MonoBehaviour
     {
         if (audioSource != null && audioSource.clip != null && !audioSource.isPlaying)
         {
+            audioSource.volume = normalVolume;
             audioSource.Play();
         }
     }
@@ -144,7 +150,7 @@ public class EerieMusicManager : MonoBehaviour
     }
 
     // Procedural Dark Ambient Horror Drone Composition
-    // Combines deep sub-bass pulsing, eerie diminished intervals, and ghostly high resonance
+    // Carefully EQ'd with rich low-mid harmonics so it translates loudly and powerfully on laptop speakers and headphones
     private AudioClip CreateEerieAmbientMusicClip()
     {
         int sampleRate = 44100;
@@ -152,43 +158,54 @@ public class EerieMusicManager : MonoBehaviour
         int totalSamples = (int)(sampleRate * length);
         float[] samples = new float[totalSamples];
 
-        // Harmonic tension tones (D minor / G# diminished tension: G1=49Hz, D2=73.4Hz, G#2=103.8Hz, D3=146.8Hz)
-        float baseFreq = 49.0f;       // Sub-bass root
-        float fifthFreq = 73.42f;     // Low fifth
-        float tritoneFreq = 103.83f;  // Dissonant devil's interval (Tritone dread)
-        float highHarmonic = 587.33f; // Distant weeping glass overtone (D5)
+        // Fundamental horror frequencies:
+        // D minor / G# diminished tension with rich mid-range harmonics for speaker clarity
+        float bassSub = 58.27f;       // Bb1 sub-bass
+        float bassFundamental = 77.78f; // Eb2 - warm mid-bass audible on laptop speakers
+        float fifthFreq = 116.54f;    // Bb2 - cello-like body
+        float tritoneFreq = 164.81f;  // E3 - ominous devil's tritone dissonance
+        float upperPad = 233.08f;     // Bb3 - cold cinematic string pad
+        float highHarmonic = 659.25f; // E5 - distant ghostly glass overtone
 
         for (int i = 0; i < totalSamples; i++)
         {
             float t = (float)i / sampleRate;
 
-            // 1. Slow ominous breathing envelope (0.04 Hz = 25s cycle)
-            float breath = 0.70f + 0.30f * Mathf.Sin(2f * Mathf.PI * 0.083f * t);
+            // 1. Slow, hypnotic respiratory swelling (0.07 Hz = 14s swell cycle)
+            float breath = 0.65f + 0.35f * Mathf.Sin(2f * Mathf.PI * 0.071f * t);
+            float secondaryBreath = 0.75f + 0.25f * Mathf.Cos(2f * Mathf.PI * 0.042f * t);
 
-            // 2. Sub-bass visceral drone with subtle binaural beating (slow detune)
-            float subDrone = Mathf.Sin(2f * Mathf.PI * baseFreq * t) * 0.45f +
-                             Mathf.Sin(2f * Mathf.PI * (baseFreq + 0.35f) * t) * 0.35f;
+            // 2. Heavy bass drone (sub + speaker-audible fundamental with binaural detune)
+            float subDrone = Mathf.Sin(2f * Mathf.PI * bassSub * t) * 0.40f;
+            float midBassDrone = (Mathf.Sin(2f * Mathf.PI * bassFundamental * t) + 
+                                  Mathf.Sin(2f * Mathf.PI * (bassFundamental + 0.45f) * t)) * 0.50f;
 
-            // 3. Low hollow pad with harmonic swell
-            float fifthDrone = Mathf.Sin(2f * Mathf.PI * fifthFreq * t) * 0.25f;
-            float tritoneSwell = Mathf.Sin(2f * Mathf.PI * tritoneFreq * t) * (0.18f * breath);
+            // 3. Haunting harmonic chord pads (swelling dissonant tension)
+            float fifthDrone = Mathf.Sin(2f * Mathf.PI * fifthFreq * t) * 0.40f;
+            float tritoneSwell = Mathf.Sin(2f * Mathf.PI * tritoneFreq * t) * (0.35f * breath);
+            float stringPad = Mathf.Sin(2f * Mathf.PI * upperPad * t) * (0.25f * secondaryBreath);
 
-            // 4. Ghostly glass overtone (drifts in and out like a cold chill)
+            // 4. Ghostly glass overtone (drifts in and out like cold breathing)
             float glassPulse = Mathf.Max(0f, Mathf.Sin(2f * Mathf.PI * 0.125f * t));
-            float glassShimmer = Mathf.Sin(2f * Mathf.PI * highHarmonic * t) * (0.04f * glassPulse);
+            float glassShimmer = Mathf.Sin(2f * Mathf.PI * highHarmonic * t) * (0.12f * glassPulse);
 
-            // 5. Air pressure wind rumble (filtered noise)
-            float noise = (Random.value * 2f - 1f) * 0.025f;
+            // 5. Ominous air texture
+            float noise = (Random.value * 2f - 1f) * 0.035f;
 
-            // Combine layers
-            float rawSample = (subDrone * 0.50f) + (fifthDrone * 0.25f) + (tritoneSwell * 0.20f) + glassShimmer + noise;
+            // Sum layers with rich musical balance
+            float raw = (subDrone * 0.35f) + 
+                        (midBassDrone * 0.45f) + 
+                        (fifthDrone * 0.35f) + 
+                        (tritoneSwell * 0.35f) + 
+                        (stringPad * 0.25f) + 
+                        glassShimmer + noise;
 
-            // Apply master warm saturation curve to avoid any clipping
-            samples[i] = Mathf.Clamp(rawSample, -0.95f, 0.95f);
+            // Apply soft analog-style saturation
+            samples[i] = Mathf.Clamp(raw, -1.0f, 1.0f);
         }
 
-        // Apply 1.0 second crossfade at loop boundaries for 100% seamless, clickless looping
-        int crossfadeSamples = (int)(sampleRate * 1.0f);
+        // Seamless loop crossfade (1.2s at both boundaries)
+        int crossfadeSamples = (int)(sampleRate * 1.2f);
         for (int i = 0; i < crossfadeSamples; i++)
         {
             float factor = (float)i / crossfadeSamples;
@@ -196,6 +213,19 @@ public class EerieMusicManager : MonoBehaviour
             float blended = (samples[i] * factor) + (samples[tailIndex] * (1f - factor));
             samples[i] = blended;
             samples[tailIndex] = blended;
+        }
+
+        // Audio Normalization: Boost waveform to 92% full scale
+        float maxAmp = 0.001f;
+        for (int i = 0; i < totalSamples; i++)
+        {
+            float abs = Mathf.Abs(samples[i]);
+            if (abs > maxAmp) maxAmp = abs;
+        }
+        float boost = 0.92f / maxAmp;
+        for (int i = 0; i < totalSamples; i++)
+        {
+            samples[i] = Mathf.Clamp(samples[i] * boost, -0.98f, 0.98f);
         }
 
         AudioClip clip = AudioClip.Create("EerieAmbientMusic", totalSamples, 1, sampleRate, false);
