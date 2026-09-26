@@ -56,6 +56,32 @@ As you investigate deeper — unlocking drawers with hidden keys, playing record
 
 **The room is your confession booth. The evidence is your jury.**
 
+
+## 🗺️ Storyboard Flowchart (Narrative Progression)
+
+```mermaid
+graph TD
+    A["<b>Scene 1: The Awakening</b><br/>• Pitch-black silence fades out<br/>• Player wakes in warm, nostalgic vintage room<br/>• WASD movement prompt appears in top-left corner"] --> B["<b>Scene 2: The Denial (Tape 1)</b><br/>• Objective: Find and listen to cassette tape<br/>• Pick up Tape 1 from coffee table<br/>• Play on tape deck: Calm rationalization monologue"]
+    
+    B --> C["<b>Scene 3: The Search for Escape</b><br/>• Objective: Search desk drawers for Tape 2<br/>• Open vintage study desk drawer<br/>• Retrieve Tape 2: 'VHSTape_WifeLore'"]
+    
+    C --> D["<b>Scene 4: The Confrontation (Tape 2)</b><br/>• Insert Tape 2 into player<br/>• Television flashes with violent static<br/>• Accusatory voice: <i>'Your time is officially up...'</i>"]
+    
+    D --> E["<b>Scene 5: The Collapse of Reality</b><br/>• Wall clock hands spin wildly out of control<br/>• Ceiling chandelier strobes and flickers<br/>• Procedural wave dissolve: Furniture, books, TV disintegrate into void"]
+    
+    E --> F["<b>Scene 6: The Unforgivable Act</b><br/>• Room transforms into cold, pitch-black crime scene<br/>• Confront victim body and murder weapon on floorboards<br/>• Retrieve front door brass key lying beside victim"]
+    
+    F --> G["<b>Scene 7: The Final Revelation & Escape</b><br/>• Unlock front door with retrieved brass key<br/>• Door opens into blinding white light<br/>• Final Message: <i>'You locked the door from the inside.'</i>"]
+
+    style A fill:#1e1e24,stroke:#4a4a5a,stroke-width:2px,color:#fff
+    style B fill:#2b261f,stroke:#d4a373,stroke-width:2px,color:#fff
+    style C fill:#2b261f,stroke:#d4a373,stroke-width:2px,color:#fff
+    style D fill:#4a1e1e,stroke:#e63946,stroke-width:2px,color:#fff
+    style E fill:#4a1e1e,stroke:#e63946,stroke-width:2px,color:#fff
+    style F fill:#16161a,stroke:#7209b7,stroke-width:2px,color:#fff
+    style G fill:#0d1b2a,stroke:#48cae4,stroke-width:2px,color:#fff
+```
+
 ---
 
 ## 🏗️ Technical Architecture
@@ -131,9 +157,25 @@ Built for the **Genesis Buildathon** hackathon.
 
 ---
 
-## 📄 License
+## 📜 Asset Credits & Third-Party Licenses
 
-This project is developed as part of a hackathon submission. All 3D assets are sourced from the Unity Asset Store and respective licenses apply.
+All external assets used in this project are strictly under free-to-use, commercial, or standard Unity Asset Store licenses:
+
+| Category | Asset / Resource | Author / Source | License |
+| :--- | :--- | :--- | :--- |
+| **3D Environment** | Vintage Living Room Game Pack | ZNS3D (Unity Asset Store) | Standard Unity Asset Store License |
+| **Character Model** | Civilian Girl Model | Mixamo / Unity Asset Store | Free Commercial License |
+| **Props** | GDT Wall Clock & Furniture Prefabs | GDT / Community Assets | Standard Asset Store License |
+| **Audio & SFX** | Analog Stopwatch Winding, Ambience | Freesound Community (User: freesound_community) | Creative Commons 0 (Public Domain) |
+| **UI Icon** | Keyboard WASD Movement Keys | Flowicon from Noun Project | Creative Commons Attribution |
+| **Typography** | Comic Neue Sans ID & Liberation Sans | Google Fonts / Unity TextMeshPro | SIL Open Font License |
+
+---
+
+## ⚖️ Hackathon Compliance Note
+* **Engine:** Built with Unity 6.
+* **Theme:** "ONE ROOM" — single contiguous room environment with no scene loading or level transitions.
+* **Narrative:** Original psychological horror story & human-authored voice transcripts written specifically for the Genesis Buildathon.
 
 ---
 
