@@ -60,7 +60,7 @@ public class IntroScreenManager : MonoBehaviour
         blackRect.offsetMin = Vector2.zero;
         blackRect.offsetMax = Vector2.zero;
 
-        // 2. WASD Movement Tutorial Prompt Panel (Bottom Center)
+        // 2. WASD Movement Tutorial Prompt Panel (Top Left Corner, enlarged)
         wasdPanelObj = new GameObject("WASD_Tutorial_Prompt");
         wasdPanelObj.transform.SetParent(canvasObj.transform, false);
         wasdCanvasGroup = wasdPanelObj.AddComponent<CanvasGroup>();
@@ -68,14 +68,14 @@ public class IntroScreenManager : MonoBehaviour
 
         // Sleek semi-transparent dark backing card
         Image panelBg = wasdPanelObj.AddComponent<Image>();
-        panelBg.color = new Color(0.08f, 0.08f, 0.08f, 0.75f);
+        panelBg.color = new Color(0.06f, 0.06f, 0.06f, 0.78f);
 
         RectTransform panelRect = wasdPanelObj.GetComponent<RectTransform>();
-        panelRect.anchorMin = new Vector2(0.5f, 0f);
-        panelRect.anchorMax = new Vector2(0.5f, 0f);
-        panelRect.pivot = new Vector2(0.5f, 0f);
-        panelRect.sizeDelta = new Vector2(180, 190);
-        panelRect.anchoredPosition = new Vector2(0f, 60f); // Floats above bottom edge
+        panelRect.anchorMin = new Vector2(0f, 1f);
+        panelRect.anchorMax = new Vector2(0f, 1f);
+        panelRect.pivot = new Vector2(0f, 1f);
+        panelRect.sizeDelta = new Vector2(240, 250); // Enlarged panel size
+        panelRect.anchoredPosition = new Vector2(45f, -45f); // Anchored to top-left with padding
 
         // WASD Icon Image inside panel
         GameObject iconObj = new GameObject("WASD_Icon");
@@ -105,26 +105,26 @@ public class IntroScreenManager : MonoBehaviour
         iconRect.anchorMin = new Vector2(0.5f, 0.5f);
         iconRect.anchorMax = new Vector2(0.5f, 0.5f);
         iconRect.pivot = new Vector2(0.5f, 0.5f);
-        iconRect.sizeDelta = new Vector2(130, 115);
-        iconRect.anchoredPosition = new Vector2(0f, 18f);
+        iconRect.sizeDelta = new Vector2(190, 165); // Enlarged icon
+        iconRect.anchoredPosition = new Vector2(0f, 22f);
 
-        // Subtitle Text: "WASD TO MOVE"
+        // Subtitle Text: "MOVE"
         GameObject labelObj = new GameObject("WASD_Label");
         labelObj.transform.SetParent(wasdPanelObj.transform, false);
         wasdLabel = labelObj.AddComponent<TextMeshProUGUI>();
         wasdLabel.text = "MOVE";
-        wasdLabel.fontSize = 18f;
+        wasdLabel.fontSize = 22f; // Enlarged font
         wasdLabel.fontStyle = FontStyles.Bold;
         wasdLabel.characterSpacing = 8f;
-        wasdLabel.color = new Color(0.95f, 0.95f, 0.95f, 0.90f);
+        wasdLabel.color = new Color(0.95f, 0.95f, 0.95f, 0.92f);
         wasdLabel.alignment = TextAlignmentOptions.Center;
 
         RectTransform labelRect = wasdLabel.GetComponent<RectTransform>();
         labelRect.anchorMin = new Vector2(0.5f, 0f);
         labelRect.anchorMax = new Vector2(0.5f, 0f);
         labelRect.pivot = new Vector2(0.5f, 0f);
-        labelRect.sizeDelta = new Vector2(160, 30);
-        labelRect.anchoredPosition = new Vector2(0f, 10f);
+        labelRect.sizeDelta = new Vector2(210, 36);
+        labelRect.anchoredPosition = new Vector2(0f, 14f);
     }
 
     private IEnumerator IntroAndTutorialRoutine()
