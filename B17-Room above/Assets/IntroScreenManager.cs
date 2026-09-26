@@ -6,7 +6,6 @@ using TMPro;
 public class IntroScreenManager : MonoBehaviour
 {
     [Header("Black Screen Fade Settings")]
-    public float blackHoldDuration = 1.0f; // Seconds to stay pure black
     public float fadeOutDuration = 2.0f;    // Smooth fade out to reveal the room
 
     [Header("WASD Movement Tutorial Prompt")]
@@ -18,6 +17,10 @@ public class IntroScreenManager : MonoBehaviour
     private Image blackOverlay;
     private CanvasGroup blackCanvasGroup;
 
+    private GameObject playButtonObj;
+    private Button playButton;
+    private bool hasStarted = false;
+
     private GameObject wasdPanelObj;
     private CanvasGroup wasdCanvasGroup;
     private Image wasdImage;
@@ -27,7 +30,31 @@ public class IntroScreenManager : MonoBehaviour
     {
         CreateIntroUI();
         LockPlayer(true);
+        // Make sure cursor is visible so player can click Play
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         StartCoroutine(IntroAndTutorialRoutine());
+    }
+
+    void Update()
+    {
+        // Keyboard shortcut to start game if mouse is not clicked
+        if (!hasStarted && (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)))
+        {
+            StartGame();
+        }
+    }
+
+    public void StartGame()
+    {
+        if (hasStarted) return;
+        hasStarted = true;
+
+        if (playButtonObj != null)
+        {
+            Destroy(playButtonObj);
+        }
     }
 
     private void CreateIntroUI()
@@ -60,7 +87,47 @@ public class IntroScreenManager : MonoBehaviour
         blackRect.offsetMin = Vector2.zero;
         blackRect.offsetMax = Vector2.zero;
 
-        // 2. WASD Movement Tutorial Prompt Panel (Top Left Corner, enlarged)
+        // 2. Simple Center PLAY Button
+        playButtonObj = new GameObject("PlayButton");
+        playButtonObj.transform.SetParent(canvasObj.transform, false);
+
+        Image btnImg = playButtonObj.AddComponent<Image>();
+        btnImg.color = new Color(0.12f, 0.12f, 0.14f, 0.95f);
+
+        playButton = playButtonObj.AddComponent<Button>();
+        ColorBlock cb = playButton.colors;
+        cb.normalColor = new Color(0.14f, 0.14f, 0.16f, 0.95f);
+        cb.highlightedColor = new Color(0.65f, 0.15f, 0.15f, 1.0f); // Crimson red on hover
+        cb.pressedColor = new Color(0.85f, 0.20f, 0.20f, 1.0f);
+        cb.selectedColor = cb.normalColor;
+        playButton.colors = cb;
+        playButton.onClick.AddListener(StartGame);
+
+        RectTransform btnRect = playButtonObj.GetComponent<RectTransform>();
+        btnRect.anchorMin = new Vector2(0.5f, 0.5f);
+        btnRect.anchorMax = new Vector2(0.5f, 0.5f);
+        btnRect.pivot = new Vector2(0.5f, 0.5f);
+        btnRect.sizeDelta = new Vector2(260, 75);
+        btnRect.anchoredPosition = Vector2.zero;
+
+        // Play Button Text
+        GameObject btnTextObj = new GameObject("PlayText");
+        btnTextObj.transform.SetParent(playButtonObj.transform, false);
+        TextMeshProUGUI btnText = btnTextObj.AddComponent<TextMeshProUGUI>();
+        btnText.text = "P L A Y";
+        btnText.fontSize = 28f;
+        btnText.fontStyle = FontStyles.Bold;
+        btnText.characterSpacing = 8f;
+        btnText.color = Color.white;
+        btnText.alignment = TextAlignmentOptions.Center;
+
+        RectTransform textRect = btnTextObj.GetComponent<RectTransform>();
+        textRect.anchorMin = Vector2.zero;
+        textRect.anchorMax = Vector2.one;
+        textRect.offsetMin = Vector2.zero;
+        textRect.offsetMax = Vector2.zero;
+
+        // 3. WASD Movement Tutorial Prompt Panel (Top Left Corner, enlarged)
         wasdPanelObj = new GameObject("WASD_Tutorial_Prompt");
         wasdPanelObj.transform.SetParent(canvasObj.transform, false);
         wasdCanvasGroup = wasdPanelObj.AddComponent<CanvasGroup>();
@@ -74,8 +141,8 @@ public class IntroScreenManager : MonoBehaviour
         panelRect.anchorMin = new Vector2(0f, 1f);
         panelRect.anchorMax = new Vector2(0f, 1f);
         panelRect.pivot = new Vector2(0f, 1f);
-        panelRect.sizeDelta = new Vector2(240, 250); // Enlarged panel size
-        panelRect.anchoredPosition = new Vector2(45f, -45f); // Anchored to top-left with padding
+        panelRect.sizeDelta = new Vector2(240, 250);
+        panelRect.anchoredPosition = new Vector2(45f, -45f);
 
         // WASD Icon Image inside panel
         GameObject iconObj = new GameObject("WASD_Icon");
@@ -83,7 +150,7 @@ public class IntroScreenManager : MonoBehaviour
         wasdImage = iconObj.AddComponent<Image>();
         wasdImage.preserveAspect = true;
 
-        // Load WASD sprite: try custom override, then Resources (transparent version or raw version)
+        // Load WASD sprite: try custom override, then Resources
         Sprite loadedSprite = customWASDSprite;
         if (loadedSprite == null)
         {
@@ -105,7 +172,7 @@ public class IntroScreenManager : MonoBehaviour
         iconRect.anchorMin = new Vector2(0.5f, 0.5f);
         iconRect.anchorMax = new Vector2(0.5f, 0.5f);
         iconRect.pivot = new Vector2(0.5f, 0.5f);
-        iconRect.sizeDelta = new Vector2(190, 165); // Enlarged icon
+        iconRect.sizeDelta = new Vector2(190, 165);
         iconRect.anchoredPosition = new Vector2(0f, 22f);
 
         // Subtitle Text: "MOVE"
@@ -113,7 +180,7 @@ public class IntroScreenManager : MonoBehaviour
         labelObj.transform.SetParent(wasdPanelObj.transform, false);
         wasdLabel = labelObj.AddComponent<TextMeshProUGUI>();
         wasdLabel.text = "MOVE";
-        wasdLabel.fontSize = 22f; // Enlarged font
+        wasdLabel.fontSize = 22f;
         wasdLabel.fontStyle = FontStyles.Bold;
         wasdLabel.characterSpacing = 8f;
         wasdLabel.color = new Color(0.95f, 0.95f, 0.95f, 0.92f);
@@ -129,8 +196,11 @@ public class IntroScreenManager : MonoBehaviour
 
     private IEnumerator IntroAndTutorialRoutine()
     {
-        // 1. Hold on pure solid black
-        yield return new WaitForSeconds(blackHoldDuration);
+        // 1. Wait on black screen until player clicks PLAY (or presses Space/Enter)
+        yield return new WaitUntil(() => hasStarted);
+
+        // Brief 0.4s hold before fading
+        yield return new WaitForSeconds(0.4f);
 
         // 2. Smooth fade out of black screen to reveal game world
         float elapsed = 0f;
@@ -144,16 +214,16 @@ public class IntroScreenManager : MonoBehaviour
 
         blackCanvasGroup.alpha = 0f;
 
-        // Destroy the black overlay object since it's no longer needed
+        // Destroy black overlay
         if (blackOverlay != null)
         {
             Destroy(blackOverlay.gameObject);
         }
 
-        // Unlock player controls
+        // Lock cursor and unlock player controls for gameplay
         LockPlayer(false);
 
-        // Notify GameManager that game is starting
+        // Notify GameManager
         if (GameManager.instance != null)
         {
             GameManager.instance.OnIntroFinished();
@@ -193,7 +263,6 @@ public class IntroScreenManager : MonoBehaviour
         {
             timer += Time.deltaTime;
 
-            // Check if player has pressed movement keys
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || 
                 Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D) ||
                 Mathf.Abs(Input.GetAxisRaw("Horizontal")) > 0.1f || 
@@ -227,6 +296,11 @@ public class IntroScreenManager : MonoBehaviour
         }
 
         if (locked)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
